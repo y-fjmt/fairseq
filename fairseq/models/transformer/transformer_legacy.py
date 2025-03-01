@@ -169,6 +169,7 @@ def tiny_architecture(args):
 def base_architecture(args):
     
     args.bias = getattr(args, "bias", False)
+    args.disable_torch_attn_fn = getattr(args, "disable_torch_attn_fn", False)
     
     args.encoder_embed_path = getattr(args, "encoder_embed_path", None)
     args.encoder_embed_dim = getattr(args, "encoder_embed_dim", 512)

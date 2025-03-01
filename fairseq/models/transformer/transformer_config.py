@@ -138,6 +138,12 @@ class TransformerConfig(FairseqDataclass):
             "help": "Whether to add bias to the linear layer"
         },
     )
+    disable_torch_attn_fn: bool = field(
+        default=False,
+        metadata={
+            "help": "don't use `torch.nn.functional.multi_head_attention_forward` for MHA"
+        },
+    )
     merge_src_tgt_embed: bool = field(
         default=False,
         metadata={

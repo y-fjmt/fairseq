@@ -90,9 +90,11 @@ class MultiheadAttention(FairseqIncrementalDecoder):
         xformers_blocksparse_blocksize: Optional[
             int
         ] = 16,  # This should be part of the config
+        disable_torch_attn_fn=False,
     ):
         super().__init__(dictionary)
-
+        
+        self.disable_torch_attn_fn = disable_torch_attn_fn
         xformers_att_config = utils.eval_str_dict(xformers_att_config)
         self.use_xformers = xformers_att_config is not None
         if self.use_xformers and not _xformers_available:
@@ -515,7 +517,9 @@ class MultiheadAttention(FairseqIncrementalDecoder):
                 assert src_len, key_bsz == value.shape[:2]
 
         if (
-            not self.onnx_trace
+            # Disable compute with pytorch multi_head_attention_forward
+            not self.disable_torch_attn_fn
+            and not self.onnx_trace
             and not is_tpu  # don't use PyTorch version on TPUs
             and incremental_state is None
             and not static_kv
