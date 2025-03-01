@@ -132,6 +132,12 @@ class TransformerConfig(FairseqDataclass):
             "help": "share encoder, decoder and output embeddings (requires shared dictionary and embed dim)"
         },
     )
+    bias: bool = field(
+        default=False,
+        metadata={
+            "help": "Whether to add bias to the linear layer"
+        },
+    )
     merge_src_tgt_embed: bool = field(
         default=False,
         metadata={

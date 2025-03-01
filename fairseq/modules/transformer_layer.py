@@ -55,26 +55,28 @@ class TransformerEncoderLayerBase(nn.Module):
         self.fc1 = self.build_fc1(
             self.embed_dim,
             cfg.encoder.ffn_embed_dim,
+            cfg.bias,
             self.quant_noise,
             self.quant_noise_block_size,
         )
         self.fc2 = self.build_fc2(
             cfg.encoder.ffn_embed_dim,
             self.embed_dim,
+            cfg.bias,
             self.quant_noise,
             self.quant_noise_block_size,
         )
 
         self.final_layer_norm = LayerNorm(self.embed_dim, export=cfg.export)
 
-    def build_fc1(self, input_dim, output_dim, q_noise, qn_block_size):
+    def build_fc1(self, input_dim, output_dim, bias, q_noise, qn_block_size):
         return quant_noise(
-            nn.Linear(input_dim, output_dim), p=q_noise, block_size=qn_block_size
+            nn.Linear(input_dim, output_dim, bias), p=q_noise, block_size=qn_block_size
         )
 
-    def build_fc2(self, input_dim, output_dim, q_noise, qn_block_size):
+    def build_fc2(self, input_dim, output_dim, bias, q_noise, qn_block_size):
         return quant_noise(
-            nn.Linear(input_dim, output_dim), p=q_noise, block_size=qn_block_size
+            nn.Linear(input_dim, output_dim, bias), p=q_noise, block_size=qn_block_size
         )
 
     def _get_fc_rank(self, remove_num: int) -> List[int]:
@@ -137,6 +139,7 @@ class TransformerEncoderLayerBase(nn.Module):
             embed_dim,
             cfg.encoder.attention_heads,
             dropout=cfg.attention_dropout,
+            bias=cfg.bias,
             self_attention=True,
             q_noise=self.quant_noise,
             qn_block_size=self.quant_noise_block_size,
@@ -326,12 +329,14 @@ class TransformerDecoderLayerBase(nn.Module):
         self.fc1 = self.build_fc1(
             self.embed_dim,
             cfg.decoder.ffn_embed_dim,
+            cfg.bias,
             self.quant_noise,
             self.quant_noise_block_size,
         )
         self.fc2 = self.build_fc2(
             cfg.decoder.ffn_embed_dim,
             self.embed_dim,
+            cfg.bias,
             self.quant_noise,
             self.quant_noise_block_size,
         )
@@ -341,11 +346,11 @@ class TransformerDecoderLayerBase(nn.Module):
 
         self.onnx_trace = False
 
-    def build_fc1(self, input_dim, output_dim, q_noise, qn_block_size):
-        return quant_noise(nn.Linear(input_dim, output_dim), q_noise, qn_block_size)
+    def build_fc1(self, input_dim, output_dim, bias, q_noise, qn_block_size):
+        return quant_noise(nn.Linear(input_dim, output_dim, bias), q_noise, qn_block_size)
 
-    def build_fc2(self, input_dim, output_dim, q_noise, qn_block_size):
-        return quant_noise(nn.Linear(input_dim, output_dim), q_noise, qn_block_size)
+    def build_fc2(self, input_dim, output_dim, bias, q_noise, qn_block_size):
+        return quant_noise(nn.Linear(input_dim, output_dim, bias), q_noise, qn_block_size)
 
     def build_self_attention(
         self, embed_dim, cfg, add_bias_kv=False, add_zero_attn=False
@@ -354,6 +359,7 @@ class TransformerDecoderLayerBase(nn.Module):
             embed_dim,
             cfg.decoder.attention_heads,
             dropout=cfg.attention_dropout,
+            bias=cfg.bias,
             add_bias_kv=add_bias_kv,
             add_zero_attn=add_zero_attn,
             self_attention=not cfg.cross_self_attention,
@@ -369,6 +375,7 @@ class TransformerDecoderLayerBase(nn.Module):
             kdim=cfg.encoder.embed_dim,
             vdim=cfg.encoder.embed_dim,
             dropout=cfg.attention_dropout,
+            bias=cfg.bias,
             encoder_decoder_attention=True,
             q_noise=self.quant_noise,
             qn_block_size=self.quant_noise_block_size,
