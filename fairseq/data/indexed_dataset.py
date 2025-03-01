@@ -409,6 +409,9 @@ class MMapIndexedDataset(torch.utils.data.Dataset):
                     dtype_size = dtype().itemsize
                     address = 0
                     pointers = []
+                    
+                    sizes = [np.int64(el) for el in sizes]
+                    address = np.int64(0)
 
                     for size in sizes:
                         pointers.append(address)
