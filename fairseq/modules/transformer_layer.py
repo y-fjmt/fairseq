@@ -55,14 +55,14 @@ class TransformerEncoderLayerBase(nn.Module):
         self.fc1 = self.build_fc1(
             self.embed_dim,
             cfg.encoder.ffn_embed_dim,
-            cfg.bias,
+            (not cfg.disable_bias),
             self.quant_noise,
             self.quant_noise_block_size,
         )
         self.fc2 = self.build_fc2(
             cfg.encoder.ffn_embed_dim,
             self.embed_dim,
-            cfg.bias,
+            (not cfg.disable_bias),
             self.quant_noise,
             self.quant_noise_block_size,
         )
@@ -139,7 +139,7 @@ class TransformerEncoderLayerBase(nn.Module):
             embed_dim,
             cfg.encoder.attention_heads,
             dropout=cfg.attention_dropout,
-            bias=cfg.bias,
+            bias=(not cfg.disable_bias),
             self_attention=True,
             q_noise=self.quant_noise,
             qn_block_size=self.quant_noise_block_size,
@@ -330,14 +330,14 @@ class TransformerDecoderLayerBase(nn.Module):
         self.fc1 = self.build_fc1(
             self.embed_dim,
             cfg.decoder.ffn_embed_dim,
-            cfg.bias,
+            (not cfg.disable_bias),
             self.quant_noise,
             self.quant_noise_block_size,
         )
         self.fc2 = self.build_fc2(
             cfg.decoder.ffn_embed_dim,
             self.embed_dim,
-            cfg.bias,
+            (not cfg.disable_bias),
             self.quant_noise,
             self.quant_noise_block_size,
         )
@@ -360,7 +360,7 @@ class TransformerDecoderLayerBase(nn.Module):
             embed_dim,
             cfg.decoder.attention_heads,
             dropout=cfg.attention_dropout,
-            bias=cfg.bias,
+            bias=(not cfg.disable_bias),
             add_bias_kv=add_bias_kv,
             add_zero_attn=add_zero_attn,
             self_attention=not cfg.cross_self_attention,
@@ -377,7 +377,7 @@ class TransformerDecoderLayerBase(nn.Module):
             kdim=cfg.encoder.embed_dim,
             vdim=cfg.encoder.embed_dim,
             dropout=cfg.attention_dropout,
-            bias=cfg.bias,
+            bias=(not cfg.disable_bias),
             encoder_decoder_attention=True,
             q_noise=self.quant_noise,
             qn_block_size=self.quant_noise_block_size,

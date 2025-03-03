@@ -132,10 +132,10 @@ class TransformerConfig(FairseqDataclass):
             "help": "share encoder, decoder and output embeddings (requires shared dictionary and embed dim)"
         },
     )
-    bias: bool = field(
+    disable_bias: bool = field(
         default=False,
         metadata={
-            "help": "Whether to add bias to the linear layer"
+            "help": "Whether to disable bias to the linear layer"
         },
     )
     disable_torch_attn_fn: bool = field(

@@ -168,7 +168,7 @@ def tiny_architecture(args):
 @register_model_architecture("transformer", "transformer")
 def base_architecture(args):
     
-    args.bias = getattr(args, "bias", False)
+    args.disable_bias = getattr(args, "disable_bias", False)
     args.disable_torch_attn_fn = getattr(args, "disable_torch_attn_fn", False)
     
     args.encoder_embed_path = getattr(args, "encoder_embed_path", None)
